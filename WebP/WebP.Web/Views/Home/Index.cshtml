@@ -1,0 +1,73 @@
+﻿@using WebP.Web.Enums;
+@model IList<WebP.Web.FileDetails>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="main-wrap web-interface">
+    <div class="borders wi-results cf">
+        @*<div class="wi-row expert-view">
+            <span class="step-description with-expert-margin">Select optimization mode</span>
+            <div class="btn-group">
+                <span class="lossy btn active" ng-click="changeMode('lossy')" ng-class="{'active': mode === 'lossy'}">Lossy</span>
+                <span class="lossless btn" ng-click="changeMode('lossless')" ng-class="{'active': mode === 'lossless'}">Lossless</span>
+                <span class="expert btn" ng-click="changeMode('expert')" ng-class="{'active': mode === 'expert'}">Expert</span>
+            </div>
+        </div>*@
+        <div class="wi-row wi-results">
+            <div class="wi-progress-bar" style="width: 0%;"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <div>File name</div>
+                        </th>
+                        <th style="text-align: right;">Original size</th>
+                        <th style="text-align: right;">Kraked size</th>
+                        <th style="text-align: right;">Savings</th>
+                        <th style="text-align: right;" class="enhanced">% Savings</th>
+                        <th style="text-align: right;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fd in Model)
+                {
+                    <tr class="success">
+                        <td>
+                            <div class="ng-binding">
+                                @fd.FileName
+                            </div>
+                        </td>
+                        <td class="ng-binding ng-scope">@fd.OriginalSizeFormatted</td>
+                        <td class="ng-binding ng-scope">@fd.WebPSizeFormatted</td>
+                        <td class="ng-binding ng-scope">@fd.SavingsFormatted</td>
+                        <td class="enhanced ng-binding ng-scope">@string.Format("{0:0.##} {1}", @fd.SavingsInPercentage, '%')</td>
+                        <td class="ng-scope">
+                            <span preview="" class="ng-binding">
+                                @if (fd.Status.Equals(ConversionStatus.Success)) {
+                                <a class="download" href="@string.Concat(fd.WebPFileLocation, fd.FileName)" target="_blank">Download File</a>
+                                }
+                                else {
+                                @fd.Status
+                                }
+                            </span>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>SUMMARY</td>
+                        <td class="ng-binding">@ConvertBytes2ReadableFormat.FormatByteSize(Model.Where(u => u.UseOriginal.Equals(false)).Sum(o => o.OriginalSize)*1024)</td>
+                        <td class="ng-binding">@ConvertBytes2ReadableFormat.FormatByteSize(Model.Where(u => u.UseOriginal.Equals(false)).Sum(w => w.WebPSize) * 1024)</td>
+                        <td class="ng-binding">@ConvertBytes2ReadableFormat.FormatByteSize(Model.Where(u => u.UseOriginal.Equals(false)).Sum(s => s.Savings) * 1024)</td>
+                        <td class="enhanced ng-binding">@string.Format("{0:0.##} {1}", Model.Where(u => u.UseOriginal.Equals(false)).Sum(p => p.SavingsInPercentage), '%')</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="wi-zip-dropbox"></div>
+    </div>
+</div>
